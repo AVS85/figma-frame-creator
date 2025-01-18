@@ -10,13 +10,13 @@ const sectionTitles = ["Задача", "Процесс", "Результат"];
 
 // Функция для создания секции
 async function createSection(x: number, y: number, title: string) {
-    const section = figma.createFrame();
-    section.resize(sectionWidth, sectionHeight);
+    const section = figma.createSection();
+    section.resizeWithoutConstraints(sectionWidth, sectionHeight);
     section.x = x;
     section.y = y;
     section.fills = [{ type: 'SOLID', color: backgroundColor }];
-    section.strokes = [{ type: 'SOLID', color: borderColor }];
-    section.strokeWeight = borderWidth;
+    // section.strokes = [{ type: 'SOLID', color: borderColor }];
+    // section.strokeWeight = borderWidth;
 
     // Устанавливаем имя фрейма
     section.name = title; // Название фрейма будет таким же, как и заголовок
