@@ -9,7 +9,7 @@ const pageBackgroundColor = { r: 30 / 255, g: 30 / 255, b: 30 / 255 }; // #1E1E1
 const sectionTitles = ["Задача", "Процесс", "Результат"];
 
 // Функция для создания секции
-async function createSection(x, y, title) {
+async function createSection(x: number, y: number, title: string) {
     const section = figma.createFrame();
     section.resize(sectionWidth, sectionHeight);
     section.x = x;
