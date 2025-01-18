@@ -1,7 +1,10 @@
 # Install
+
 npm i
+
 npm run build
 
+===============
 
 Below are the steps to get your plugin running. You can also find instructions at:
 
