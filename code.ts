@@ -1,4 +1,4 @@
-// Определяем параметры секций
+// Параметры плагина
 const sectionWidth = 1350;
 const sectionHeight = 2700;
 const sectionSpacing = 100;
@@ -8,61 +8,44 @@ const backgroundColor = { r: 68 / 255, g: 68 / 255, b: 68 / 255 }; // #444444
 const pageBackgroundColor = { r: 30 / 255, g: 30 / 255, b: 30 / 255 }; // #1E1E1E
 const sectionTitles = ["Задача", "Процесс", "Результат"];
 
-// Функция для создания секции
+// Создание секции
 async function createSection(x: number, y: number, title: string) {
     const section = figma.createSection();
     section.resizeWithoutConstraints(sectionWidth, sectionHeight);
     section.x = x;
     section.y = y;
-    section.fills = [{ type: 'SOLID', color: backgroundColor }];
-    // section.strokes = [{ type: 'SOLID', color: borderColor }];
-    // section.strokeWeight = borderWidth;
-
-    // Устанавливаем имя фрейма
-    section.name = title; // Название фрейма будет таким же, как и заголовок
-
-    // const textNode = figma.createText();
-    // await figma.loadFontAsync({ family: "Inter", style: "Regular" }); // Замените на нужный вам шрифт
-    // textNode.characters = title;
-    // textNode.fontSize = 48; // размер шрифта
-    // textNode.x = (sectionWidth - textNode.width) / 2; // центрируем текст по горизонтали
-    // textNode.y = (sectionHeight - textNode.height) / 2; // центрируем текст по вертикали
-
-    // section.appendChild(textNode);
-    figma.currentPage.appendChild(section); // Добавляем секцию на страницу
+    section.name = title; // добавляем название секции
+    figma.currentPage.appendChild(section); // добавляем секцию на страницу
+    return section;
 }
 
-// Основная функция плагина
+// Базовая функция
 async function main() {
-  // Убедимся, что у нас есть выбранный слой
-  const selection = figma.currentPage.selection;
-  if (selection.length === 0) {
-      figma.notify("Пожалуйста, выберите слой для размещения секций.");
-      return;
+  // Устанавливаем цвет фона страницы
+  figma.currentPage.backgrounds = [{ type: 'SOLID', color: pageBackgroundColor }];
+
+  // Вычисляем начальные координаты viewport'а
+  const startX = figma.viewport.bounds.x;
+  const startY = figma.viewport.bounds.y;
+
+  // Массив для хранения созданных секций
+  const createdSections = []; 
+
+  // Создание секций
+  for (let i = 0; i < sectionTitles.length; i++) {
+      const x = startX + (sectionWidth + sectionSpacing) * i;
+      const y = startY;
+      const section = await createSection(x, y, sectionTitles[i]); 
+      createdSections.push(section); // Сохраняем ссылку на созданную секцию
   }
 
-  const selectedLayer = selection[0];
-
-  // Проверяем, является ли выбранный узел фреймом или другим узлом с координатами
-  if ("x" in selectedLayer && "y" in selectedLayer) {
-      // Устанавливаем цвет фона страницы
-      figma.currentPage.backgrounds = [{ type: 'SOLID', color: pageBackgroundColor }];
-
-      // Создаем три секции
-      for (let i = 0; i < sectionTitles.length; i++) {
-          const x = selectedLayer.x + (sectionWidth + sectionSpacing) * i;
-          const y = selectedLayer.y;
-          await createSection(x, y, sectionTitles[i]); // Добавляем await здесь
-      }
-  } else {
-      figma.notify("Выбранный слой не поддерживает координаты.");
-  }
+  figma.currentPage.selection = createdSections; // выделяет созданные секции
+  figma.viewport.scrollAndZoomIntoView(figma.currentPage.selection) // подгоняет масштаб под выделенные объекты
 
   figma.closePlugin();
 }
 
-
-// Запускаем основную функцию
+// Старт плагина
 main().catch(err => {
     console.error(err);
     figma.closePlugin("Произошла ошибка.");
