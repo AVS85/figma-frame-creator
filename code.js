@@ -44,6 +44,7 @@ function createSection(x, y, title) {
             text.y = rectangle.height + 125; // отступ сверху
             text.fontSize = 36;
             text.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }];
+            section.appendChild(text);
         }
         return section;
     });
